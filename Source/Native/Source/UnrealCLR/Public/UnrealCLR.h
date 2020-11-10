@@ -36,6 +36,7 @@
 #include "Components/ShapeComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SplineComponent.h"
+#include "Components/TextRenderComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/Font.h"
@@ -294,7 +295,7 @@ namespace UnrealCLR {
 		void OnWorldPostInitialization(UWorld* World, const UWorld::InitializationValues InitializationValues);
 		void OnWorldCleanup(UWorld* World, bool SessionEnded, bool CleanupResources);
 
-		static void RegisterTickFunction(FTickFunction& TickFunction, ETickingGroup TickGroup, ALevelScriptActor* LevelActor);
+		static void RegisterTickFunction(FTickFunction& TickFunction, ETickingGroup TickGroup, AWorldSettings* LevelActor);
 		static void HostError(const char_t* Message);
 		static void Exception(const char* Message);
 		static void Log(UnrealCLR::LogLevel Level, const char* Message);
@@ -365,6 +366,7 @@ namespace UnrealCLR {
 		static void* SphereComponentFunctions[storageSize];
 		static void* CapsuleComponentFunctions[storageSize];
 		static void* MeshComponentFunctions[storageSize];
+		static void* TextRenderComponentFunctions[storageSize];
 		static void* LightComponentBaseFunctions[storageSize];
 		static void* LightComponentFunctions[storageSize];
 		static void* MotionControllerComponentFunctions[storageSize];

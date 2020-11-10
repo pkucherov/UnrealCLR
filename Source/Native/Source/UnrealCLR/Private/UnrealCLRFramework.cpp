@@ -166,6 +166,9 @@ namespace UnrealCLRFramework {
 			case ComponentType::SkeletalMesh:\
 				Result = Head USkeletalMeshComponent Tail;\
 				break;\
+			case ComponentType::TextRender:\
+				Result = Head UTextRenderComponent Tail;\
+				break;\
 			case ComponentType::Spline:\
 				Result = Head USplineComponent Tail;\
 				break;\
@@ -226,6 +229,9 @@ namespace UnrealCLRFramework {
 				break;\
 			case ComponentType::SkeletalMesh:\
 				Result = Head USkeletalMeshComponent Tail;\
+				break;\
+			case ComponentType::TextRender:\
+				Result = Head UTextRenderComponent Tail;\
 				break;\
 			case ComponentType::Spline:\
 				Result = Head USplineComponent Tail;\
@@ -369,6 +375,7 @@ namespace UnrealCLRFramework {
 
 	static_assert(sizeof(Bounds) == 28, "Invalid size of the [Bounds] structure");
 	static_assert(sizeof(CollisionShape) == 16, "Invalid size of the [CollisionShape] structure");
+	static_assert(sizeof(Transform) == 48, "Invalid size of the [Transform] structure");
 
 	namespace Assert {
 		void OutputMessage(const char* Message) {
@@ -2491,7 +2498,7 @@ namespace UnrealCLRFramework {
 		}
 
 		void SetWorldTransform(USceneComponent* SceneComponent, const Transform* Transform) {
-			SceneComponent->SetWorldTransform(*Transform);
+			SceneComponent->SetWorldTransform(FTransform(Transform->GetRotation(), Transform->GetTranslation(), Transform->GetScale3D()));
 		}
 	}
 
@@ -2592,6 +2599,14 @@ namespace UnrealCLRFramework {
 	}
 
 	namespace ChildActorComponent {
+		AActor* GetChildActor(UChildActorComponent* ChildActorComponent, ActorType Type) {
+			AActor* actor = nullptr;
+
+			UNREALCLR_GET_ACTOR_TYPE(Type, Cast<, >(ChildActorComponent->GetChildActor()), actor);
+
+			return actor;
+		}
+
 		AActor* SetChildActor(UChildActorComponent* ChildActorComponent, ActorType Type) {
 			TSubclassOf<AActor> type;
 
@@ -3209,6 +3224,49 @@ namespace UnrealCLRFramework {
 		}
 	}
 
+	namespace TextRenderComponent {
+		void SetFont(UTextRenderComponent* TextRenderComponent, UFont* Value) {
+			TextRenderComponent->SetFont(Value);
+		}
+
+		void SetText(UTextRenderComponent* TextRenderComponent, const char* Value) {
+			TextRenderComponent->SetText(FText::FromString(FString(ANSI_TO_TCHAR(Value))));
+		}
+
+		void SetTextMaterial(UTextRenderComponent* TextRenderComponent, UMaterialInterface* Material) {
+			TextRenderComponent->SetTextMaterial(Material);
+		}
+
+		void SetTextRenderColor(UTextRenderComponent* TextRenderComponent, Color Value) {
+			TextRenderComponent->SetTextRenderColor(Value);
+		}
+
+		void SetHorizontalAlignment(UTextRenderComponent* TextRenderComponent, HorizontalTextAligment Value) {
+			TextRenderComponent->SetHorizontalAlignment(Value);
+		}
+
+		void SetHorizontalSpacingAdjustment(UTextRenderComponent* TextRenderComponent, float Value) {
+			TextRenderComponent->SetHorizSpacingAdjust(Value);
+		}
+
+		void SetVerticalAlignment(UTextRenderComponent* TextRenderComponent, VerticalTextAligment Value) {
+			TextRenderComponent->SetVerticalAlignment(Value);
+		}
+
+		void SetVerticalSpacingAdjustment(UTextRenderComponent* TextRenderComponent, float Value) {
+			TextRenderComponent->SetVertSpacingAdjust(Value);
+		}
+
+		void SetScale(UTextRenderComponent* TextRenderComponent, const Vector2* Value) {
+			TextRenderComponent->SetXScale(Value->X);
+			TextRenderComponent->SetYScale(Value->Y);
+		}
+
+		void SetWorldSize(UTextRenderComponent* TextRenderComponent, float Value) {
+			TextRenderComponent->SetWorldSize(Value);
+		}
+	}
+
 	namespace LightComponentBase {
 		float GetIntensity(ULightComponentBase* LightComponentBase) {
 			return LightComponentBase->Intensity;
@@ -3323,15 +3381,7 @@ namespace UnrealCLRFramework {
 		}
 
 		bool BatchUpdateInstanceTransforms(UInstancedStaticMeshComponent* InstancedStaticMeshComponent, int32 StartInstanceIndex, int32 EndInstanceIndex, const Transform InstanceTransforms[], bool WorldSpace, bool MarkRenderStateDirty, bool Teleport) {
-			bool result = true;
-
-			for (int32 i = StartInstanceIndex; i < EndInstanceIndex; i++) {
-				bool updateResult = InstancedStaticMeshComponent->UpdateInstanceTransform(i, InstanceTransforms[i], WorldSpace, MarkRenderStateDirty, Teleport);
-
-				result = result && updateResult;
-			}
-
-			return result;
+			return InstancedStaticMeshComponent->BatchUpdateInstancesTransforms(StartInstanceIndex, TArray<FTransform>(InstanceTransforms, EndInstanceIndex), WorldSpace, MarkRenderStateDirty, Teleport);
 		}
 
 		bool RemoveInstance(UInstancedStaticMeshComponent* InstancedStaticMeshComponent, int32 InstanceIndex) {

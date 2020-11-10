@@ -33,13 +33,16 @@ namespace UnrealCLRFramework {
 	using CollisionChannel = ECollisionChannel;
 	using CollisionResponse = ECollisionResponse;
 	using ControllerHand = EControllerHand;
+	using HorizontalTextAligment = EHorizTextAligment;
 	using InputEvent = EInputEvent;
 	using NetMode = ENetMode;
 	using PixelFormat = EPixelFormat;
 	using TeleportType = ETeleportType;
+	using VerticalTextAligment = EVerticalTextAligment;
 
 	using Bounds = FBoxSphereBounds;
 	using CollisionShape = FCollisionShape;
+	using Transform = FTransform;
 
 	enum struct LogLevel : int32 {
 		Display,
@@ -167,19 +170,6 @@ namespace UnrealCLRFramework {
 		FORCEINLINE operator FLinearColor() const { return FLinearColor(R, G, B, A); }
 	};
 
-	struct Transform {
-		Quaternion Rotation;
-		Vector3 Location;
-		Vector3 Scale;
-
-		FORCEINLINE Transform(const FTransform& Value) :
-			Rotation(Value.GetRotation()),
-			Location(Value.GetTranslation()),
-			Scale(Value.GetScale3D()) { }
-
-		FORCEINLINE operator FTransform() const { return FTransform(Rotation, Location, Scale); }
-	};
-
 	struct Hit {
 		Vector3 Location;
 		Vector3 ImpactLocation;
@@ -290,6 +280,7 @@ namespace UnrealCLRFramework {
 		Box,
 		Sphere,
 		Capsule,
+		TextRender,
 		SkeletalMesh,
 		Spline,
 		RadialForce
@@ -847,6 +838,7 @@ namespace UnrealCLRFramework {
 	}
 
 	namespace ChildActorComponent {
+		static AActor* GetChildActor(UChildActorComponent* ChildActorComponent, ActorType Type);
 		static AActor* SetChildActor(UChildActorComponent* ChildActorComponent, ActorType Type);
 	}
 
@@ -1003,6 +995,19 @@ namespace UnrealCLRFramework {
 	namespace MeshComponent {
 		static bool IsValidMaterialSlotName(UMeshComponent* MeshComponent, const char* MaterialSlotName);
 		static int32 GetMaterialIndex(UMeshComponent* MeshComponent, const char* MaterialSlotName);
+	}
+
+	namespace TextRenderComponent {
+		static void SetFont(UTextRenderComponent* TextRenderComponent, UFont* Value);
+		static void SetText(UTextRenderComponent* TextRenderComponent, const char* Value);
+		static void SetTextMaterial(UTextRenderComponent* TextRenderComponent, UMaterialInterface* Material);
+		static void SetTextRenderColor(UTextRenderComponent* TextRenderComponent, Color Value);
+		static void SetHorizontalAlignment(UTextRenderComponent* TextRenderComponent, HorizontalTextAligment Value);
+		static void SetHorizontalSpacingAdjustment(UTextRenderComponent* TextRenderComponent, float Value);
+		static void SetVerticalAlignment(UTextRenderComponent* TextRenderComponent, VerticalTextAligment Value);
+		static void SetVerticalSpacingAdjustment(UTextRenderComponent* TextRenderComponent, float Value);
+		static void SetScale(UTextRenderComponent* TextRenderComponent, const Vector2* Value);
+		static void SetWorldSize(UTextRenderComponent* TextRenderComponent, float Value);
 	}
 
 	namespace LightComponentBase {

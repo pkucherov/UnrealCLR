@@ -26,7 +26,7 @@ namespace UnrealEngine.Framework {
 	// Automatically generated
 
 	internal static class Shared {
-		internal const int checksum = 0x2B8;
+		internal const int checksum = 0x2C4;
 		internal static Dictionary<int, IntPtr> userFunctions = new();
 		private const string dynamicTypesAssemblyName = "UnrealEngine.DynamicTypes";
 		private static readonly ModuleBuilder moduleBuilder = AssemblyBuilder.DefineDynamicAssembly(new(dynamicTypesAssemblyName), AssemblyBuilderAccess.RunAndCollect).DefineDynamicModule(dynamicTypesAssemblyName);
@@ -635,6 +635,7 @@ namespace UnrealEngine.Framework {
 				int head = 0;
 				IntPtr* childActorComponentFunctions = (IntPtr*)buffer[position++];
 
+				ChildActorComponent.getChildActor = (delegate* unmanaged[Cdecl]<IntPtr, ActorType, IntPtr>)childActorComponentFunctions[head++];
 				ChildActorComponent.setChildActor = (delegate* unmanaged[Cdecl]<IntPtr, ActorType, IntPtr>)childActorComponentFunctions[head++];
 			}
 
@@ -815,6 +816,22 @@ namespace UnrealEngine.Framework {
 
 				MeshComponent.isValidMaterialSlotName = (delegate* unmanaged[Cdecl]<IntPtr, string, Bool>)meshComponentFunctions[head++];
 				MeshComponent.getMaterialIndex = (delegate* unmanaged[Cdecl]<IntPtr, string, int>)meshComponentFunctions[head++];
+			}
+
+			unchecked {
+				int head = 0;
+				IntPtr* textRenderComponentFunctions = (IntPtr*)buffer[position++];
+
+				TextRenderComponent.setFont = (delegate* unmanaged[Cdecl]<IntPtr, IntPtr, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setText = (delegate* unmanaged[Cdecl]<IntPtr, string, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setTextMaterial = (delegate* unmanaged[Cdecl]<IntPtr, IntPtr, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setTextRenderColor = (delegate* unmanaged[Cdecl]<IntPtr, int, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setHorizontalAlignment = (delegate* unmanaged[Cdecl]<IntPtr, HorizontalTextAligment, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setHorizontalSpacingAdjustment = (delegate* unmanaged[Cdecl]<IntPtr, float, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setVerticalAlignment = (delegate* unmanaged[Cdecl]<IntPtr, VerticalTextAligment, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setVerticalSpacingAdjustment = (delegate* unmanaged[Cdecl]<IntPtr, float, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setScale = (delegate* unmanaged[Cdecl]<IntPtr, in Vector2, void>)textRenderComponentFunctions[head++];
+				TextRenderComponent.setWorldSize = (delegate* unmanaged[Cdecl]<IntPtr, float, void>)textRenderComponentFunctions[head++];
 			}
 
 			unchecked {
@@ -1185,10 +1202,13 @@ namespace UnrealEngine.Framework {
 		private float a;
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
+	[StructLayout(LayoutKind.Explicit, Size = 48)]
 	partial struct Transform {
+		[FieldOffset(0)]
 		private Quaternion rotation;
+		[FieldOffset(16)]
 		private Vector3 location;
+		[FieldOffset(32)]
 		private Vector3 scale;
 	}
 
@@ -1308,6 +1328,7 @@ namespace UnrealEngine.Framework {
 		Box,
 		Sphere,
 		Capsule,
+		TextRender,
 		SkeletalMesh,
 		Spline,
 		RadialForce
@@ -1843,6 +1864,7 @@ namespace UnrealEngine.Framework {
 	}
 
 	unsafe partial class ChildActorComponent {
+		internal static delegate* unmanaged[Cdecl]<IntPtr, ActorType, IntPtr> getChildActor;
 		internal static delegate* unmanaged[Cdecl]<IntPtr, ActorType, IntPtr> setChildActor;
 	}
 
@@ -1999,6 +2021,19 @@ namespace UnrealEngine.Framework {
 	unsafe partial class MeshComponent {
 		internal static delegate* unmanaged[Cdecl]<IntPtr, string, Bool> isValidMaterialSlotName;
 		internal static delegate* unmanaged[Cdecl]<IntPtr, string, int> getMaterialIndex;
+	}
+
+	unsafe partial class TextRenderComponent {
+		internal static delegate* unmanaged[Cdecl]<IntPtr, IntPtr, void> setFont;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, string, void> setText;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, IntPtr, void> setTextMaterial;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, int, void> setTextRenderColor;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, HorizontalTextAligment, void> setHorizontalAlignment;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, float, void> setHorizontalSpacingAdjustment;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, VerticalTextAligment, void> setVerticalAlignment;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, float, void> setVerticalSpacingAdjustment;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, in Vector2, void> setScale;
+		internal static delegate* unmanaged[Cdecl]<IntPtr, float, void> setWorldSize;
 	}
 
 	unsafe partial class LightComponentBase {

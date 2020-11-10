@@ -14,12 +14,31 @@
 Getting started
 --------
 ### Development
-UnrealCLR not tied to how organized the development environment. Any IDE such as [Visual Studio](https://visualstudio.microsoft.com), [Visual Code](https://code.visualstudio.com), or [Rider](https://www.jetbrains.com/rider/), can be used to manage a project. A programmer has full freedom to set up the building pipeline in any desirable way just as for a regular .NET library.
+UnrealCLR doesn't depend on how the development environment is organized. Any IDE such as [Visual Studio](https://visualstudio.microsoft.com), [Visual Code](https://code.visualstudio.com), or [Rider](https://www.jetbrains.com/rider/), can be used to manage a project. A programmer has full freedom to set up the building pipeline in any desirable way just as for a regular .NET library.
 
 ### Project
 After [building and installing](https://github.com/nxrighthere/UnrealCLR#building) the plugin, use IDE or [CLI tool](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new) to create a [.NET class library](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-new#classlib) project which targets `net5.0` in any preferable location. Don't store source code in `%Project%/Managed` folder of the engine's project, it's used exclusively for loading and packaging user assemblies by the plugin.
 
-Add a reference to `UnrealEngine.Framework.dll` assembly located in `Source/Managed/Framework/bin/Release` folder. Create a new or open a source code file in the .NET project and replace its content with the following code:
+Add a reference to `UnrealEngine.Framework.dll` assembly located in `Source/Managed/Framework/bin/Release` folder.
+
+Assuming you put your code in `%Project%/MyDotNetCode`, your project file should look similar to this:
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>../Managed/Build</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="UnrealEngine.Framework">
+      <HintPath>%UnrealCLR%/Source/Managed/Framework/bin/Release/UnrealEngine.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
+```
+
+Create a new or open a source code file in the .NET project and replace its content with the following code:
 
 #### Entry point
 
@@ -137,7 +156,7 @@ The framework provides world events that are executed by the engine in a predete
 
 `OnWorldBegin()` Called after the world is initialized before the level script.
 
-`OnWorldPostBegin()` Called after the level script.
+`OnWorldPostBegin()` Called after the level script when default actors are spawned.
 
 `OnWorldEnd()` Called before deinitialization of the world after the level script.
 
